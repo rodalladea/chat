@@ -16,9 +16,9 @@ app.use(routes);
 
 io.on('connection', socket => {
   console.log('New client connected');
+  getAllConnected();
   
   socket.on('sendMessage', data => {
-    console.log(data);
     socket.broadcast.emit('receivedMessage', data);
   });
 
@@ -27,12 +27,11 @@ io.on('connection', socket => {
   });
 });
 
-
-
-const getApiEmit = socket => {
-  const response = new Date();
-
-  socket.emit('FromAPI', response);
+const getAllConnected = () => {
+  io.clients((error, clients) => {
+    if (error) throw error;
+    io.sockets.emit('allUsers', clients);
+  })
 };
 
 server.listen(3333, () => console.log('server running...'));
